@@ -202,7 +202,7 @@ module.exports = grammar({
     attribute_item: $ => seq(
       '#',
       '[',
-      $.meta_item,
+      $._attr,
       ']'
     ),
 
@@ -210,8 +210,29 @@ module.exports = grammar({
       '#',
       '!',
       '[',
-      $.meta_item,
+      $._attr,
       ']'
+    ),
+
+    _attr: $ => choice(
+      $.meta_item,
+      $.attr_item
+    ),
+
+    attr_item: $ => seq(
+      $._path,
+      field('arguments', $.delim_token_tree)
+    ),
+
+    delim_token_tree: $ => choice(
+      seq('(', repeat($._delim_tokens), ')'),
+      seq('[', repeat($._delim_tokens), ']'),
+      seq('{', repeat($._delim_tokens), '}')
+    ),
+
+    _delim_tokens: $ => choice(
+      $._non_special_token,
+      $.delim_token_tree,
     ),
 
     meta_item: $ => seq(
